@@ -1,0 +1,11 @@
+---
+
+- name: logrotate config file
+  become: yes
+  template:
+    dest: /etc/logrotate.d/{{ item }}
+    src: logrotate/{{ item }}
+    mode: 0644
+  with_items:
+    - bedita
+    - php-bedita
