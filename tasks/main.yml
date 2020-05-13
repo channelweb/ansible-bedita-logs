@@ -1,11 +1,24 @@
 ---
 
-- name: logrotate config file
+- name: make sure app_logs_path exists
+  become: yes
+  file:
+    path: "{{ app_logs_path }}"
+    state: directory
+    owner: "{{ app_deploy_user }}"
+    mode: 0755
+
+- name: lookup files in templates/logrotate
+  local_action: stat path="{{ playbook_dir }}/templates/logrotate/"
+  register: logrot
+  
+- name: setup logrotate config files in /etc/logrotate.d/
   become: yes
   template:
-    dest: /etc/logrotate.d/{{ item }}
-    src: logrotate/{{ item }}
+    dest: /etc/logrotate.d/
+    src: "{{ item }}"
     mode: 0644
-  with_items:
-    - bedita
-    - php-bedita
+  when: logrot.stat.isdir is defined and logrot.stat.isdir
+  with_fileglob:
+    - "{{ logrot.stat.path }}/*"
+
