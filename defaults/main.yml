@@ -2,3 +2,4 @@
 # vars defaults
 app_logs_path: /var/log/bedita
 app_user: www-data
+app_deploy_user: www-data
